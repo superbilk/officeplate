@@ -1,30 +1,32 @@
-######## Demo #########
-
-
 require 'test/unit'
-require 'Order'
+require 'Plate'
 
 
-class SandwichTest < Test::Unit::TestCase
+class SandwichPieceTest < Test::Unit::TestCase
   def test_buy_ok
-    SandwichOrder::Varieties.each{|var|
+    SandwichPiece::Varieties.each{|var|
       p = nil #keep var from block
       owner = var.succ * 2  #just a nonsense string
-      assert_nothing_raised{ p = SandwichOrder.new(var, owner) }
+      assert_nothing_raised{ p = SandwichPiece.new(var, owner) }
       assert_equal(var, p.variety)
       assert_equal(owner, p.owner)
     }
   end
+  
   def test_buy_error
-      assert_raise(SandwichOrder::SandwichOrderError){ 
-            SandwichOrder.new('Veggie-Beef', 'Klaus') 
-          }
+    assert_raise(SandwichPiece::SandwichPieceError){ 
+      SandwichPiece.new('Veggie-Beef', 'Klaus') 
+    }
   end
-end #class SandwichTest < Test::Unit::TestCase
-class OrderTest < Test::Unit::TestCase
+  
+end #class SandwichPieceTest < Test::Unit::TestCase
+
+
+
+class PlateTest < Test::Unit::TestCase
   
   def test_buy
-    p = Order.new
+    p = Plate.new
     assert_equal(0, p.orders.size)
     assert_equal(true, p.buy_piece("Beef", "Klaus"))
     assert_equal(1, p.orders.size)
@@ -33,20 +35,21 @@ class OrderTest < Test::Unit::TestCase
   end
 
   def test_return
-    p = Order.new
+    p = Plate.new
     assert_equal(true, p.buy_piece("Beef", "Klaus"))
     assert_equal(1, p.orders.size)
-    #-> Warnung
+
     assert_equal(false, p.return_piece("Beef", "Werner"))
     assert_equal(1, p.orders.size)
+
     assert_equal(true, p.return_piece("Beef", "Klaus"))
     assert_equal(0, p.orders.size)
-    #-> Warnung
+
     assert_equal(false, p.return_piece("Beef", "Klaus"))
   end
 
   def test_1
-    p = Order.new
+    p = Plate.new
 
     3.times { p.buy_piece "Beef", "Klaus" }
     assert_equal(
