@@ -10,7 +10,7 @@ class Plate
     @pieces_per_sandwich = pieces_per_sandwich
     @orders = []
     @log = Log4r::Logger.new('Order')
-    #~ @log.outputters << Log4r::StdoutOutputter.new('log_stdout', :level => Log4r::INFO)
+    # @log.outputters << Log4r::StdoutOutputter.new('log_stdout', :level => Log4r::INFO)
   end
   
   def buy_piece(variety, who)
@@ -36,7 +36,7 @@ class Plate
     found #return result
   end
   
-  def order()
+  def summary
     order = {}
     @orders.each{ |o| 
       order[o.variety] = [] unless order[o.variety]
@@ -52,9 +52,39 @@ class Plate
         result[var]['orderer'][o] += 1
       }
     }
-    puts order.inspect
-    puts result.inspect
     result
   end
+  
+  def available_varieties
+    available = {}
+    if final?
+      return available
+    else
+
+
+    end
+    
+    
+#    if orders.size <= ( @sandwiches_per_plate -1 ) * @pieces_per_sandwich
+#      available << SandwichPiece::Varieties.each
+#    end
+#
+#    order.each{|var, orders|
+#      result[var] = {}
+#      result[var]['full'] = orders.size.div(@pieces_per_sandwich)
+#      result[var]['parts'] = orders.size.divmod(@pieces_per_sandwich).last
+#      result[var]['orderer'] = Hash.new(0)
+#      orders.each{|o|
+#        result[var]['orderer'][o] += 1
+#      }
+#    }
+#    
+  end
+  
+  def final?
+    @orders.size == @sandwiches_per_plate * @pieces_per_sandwich
+  end
+  
+  
 end # class Order
 

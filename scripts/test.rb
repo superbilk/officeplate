@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'Plate'
-
+require 'yaml'
 
 class SandwichPieceTest < Test::Unit::TestCase
   def test_buy_ok
@@ -58,7 +58,7 @@ class PlateTest < Test::Unit::TestCase
                 'parts' => 0, 
                 'orderer' => { 'Klaus' => 3}
           },
-      }, p.order
+      }, p.summary
     )
     
     10.times { p.buy_piece "Ham", "Klaus" }
@@ -73,7 +73,7 @@ class PlateTest < Test::Unit::TestCase
                 'parts' => 1, 
                 'orderer' => { 'Klaus' => 10}
           },
-      }, p.order
+      }, p.summary
     )
     
     3.times { p.buy_piece "Beef", "Peter" }
@@ -88,7 +88,7 @@ class PlateTest < Test::Unit::TestCase
                 'parts' => 1, 
                 'orderer' => { 'Klaus' => 10}
           },
-      }, p.order
+      }, p.summary
     )
 
 
@@ -104,7 +104,7 @@ class PlateTest < Test::Unit::TestCase
                 'parts' => 1, 
                 'orderer' => { 'Klaus' => 10}
           },
-      }, p.order
+      }, p.summary
     )
     
     2.times { p.return_piece "Beef", "Peter" }
@@ -119,7 +119,7 @@ class PlateTest < Test::Unit::TestCase
                 'parts' => 1, 
                 'orderer' => { 'Klaus' => 10}
           },
-      }, p.order
+      }, p.summary
     )
     
     2.times { p.return_piece "Ham", "Klaus" }
@@ -134,8 +134,96 @@ class PlateTest < Test::Unit::TestCase
                 'parts' => 2, 
                 'orderer' => { 'Klaus' => 8}
           },
-      }, p.order
+      }, p.summary
     )
 
   end
+
+  def test_2
+    p = Plate.new
+  
+    3.times { p.buy_piece "Beef", "Klaus" }
+    assert_equal(
+      { "Beef" => { 
+                'full' => 1, 
+                'parts' => 0, 
+                'orderer' => { 'Klaus' => 3}
+          },
+      }, p.summary
+    )
+  
+    3.times { p.buy_piece "Ham", "Peter" }
+    assert_equal(
+      { "Beef" => { 
+                'full' => 1, 
+                'parts' => 0, 
+                'orderer' => { 'Klaus' => 3}
+          },
+        "Ham" => { 
+                'full' => 1, 
+                'parts' => 0, 
+                'orderer' => { 'Peter' => 3}
+          }
+      }, p.summary
+    )
+  
+    3.times { p.buy_piece "Beef", "Dieter" }
+    assert_equal(
+      { "Beef" => { 
+                'full' => 2, 
+                'parts' => 0, 
+                'orderer' => { 'Dieter' => 3, 'Klaus' => 3}
+          },
+        "Ham" => { 
+                'full' => 1, 
+                'parts' => 0, 
+                'orderer' => { 'Peter' => 3}
+          }
+      }, p.summary
+    )
+
+    3.times { p.return_piece "Ham", "Peter" }
+    assert_equal(
+      { "Beef" => { 
+                'full' => 2, 
+                'parts' => 0, 
+                'orderer' => { 'Dieter' => 3, 'Klaus' => 3}
+          }
+      }, p.summary
+    )
+  
+    2.times { p.return_piece "Beef", "Klaus" }
+    2.times { p.return_piece "Beef", "Dieter" }
+    assert_equal(
+      { "Beef" => { 
+                'full' => 0, 
+                'parts' => 2, 
+                'orderer' => { 'Dieter' => 1, 'Klaus' => 1}
+          }
+      }, p.summary
+    )
+  
+  end
+
+  def test_no_availability
+    p = Plate.new
+    15.times { p.buy_piece "Beef", "Klaus" }
+    assert_equal( {} , p.available_varieties)
+  end
+  
+#  def test_all_varieties_available
+#    10.times { p.buy_piece "Beef", "Klaus" }
+#    assert_equal( {} , p.available_varieties)
+#  end
+#  
+
+def testing
+  p = Plate.new
+  5.times { p.buy_piece "Beef", "Klaus" }
+  p.available_varieties
+end
+  
+# Order{ "Beef" => 3, "Ham" => 2}
+
+
 end
